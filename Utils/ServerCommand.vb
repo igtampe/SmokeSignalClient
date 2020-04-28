@@ -2,7 +2,7 @@
 Imports System.Net.Sockets
 
 ''' <summary>ServerCommand is a utility that sends a command to a SmokeSignal server. </summary>
-Public Class ServerCommand
+Public Module ServerCommand
 
     'REMEMBER TO OVERRIDE THE DEFAULT IP AND PORT!
 
@@ -17,7 +17,7 @@ Public Class ServerCommand
     ''' CRASH if ServerCommand's connection to the server was abruptly cut
     ''' Otherwise, an actual message from the server.
     ''' </returns>
-    Public Shared Function RawCommand(ByVal ClientMSG As String, Optional IP As String = "127.0.0.1", Optional Port As Integer = 797) As String
+    Public Function RawCommand(ByVal ClientMSG As String, Optional IP As String = "127.0.0.1", Optional Port As Integer = 797) As String
 
         Dim tc As TcpClient = New TcpClient()
         Dim ns As NetworkStream
@@ -59,4 +59,17 @@ Public Class ServerCommand
         Return ServerMSG
 
     End Function
-End Class
+
+    ''' <summary>
+    ''' Used for commands that use Authentication (introduced in SmokeSignal V7. <br></br>
+    ''' We don't encrypt the username and password here, but you're free to use any encryption to prepare, and decode these on the other end.
+    ''' </summary>
+    ''' <param name="Username"></param>
+    ''' <param name="Password"></param>
+    ''' <param name="ClientMSG"></param>
+    ''' <returns></returns>
+    Public Function AuthenticatedRawCommand(Username As String, Password As String, ClientMSG As String) As String
+        Return RawCommand(String.Join("|", {Username, Password, ClientMSG}))
+    End Function
+
+End Module
